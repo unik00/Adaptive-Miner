@@ -610,7 +610,7 @@ object  Apriori {
     def h2(k:Set[Int] , v:Int)=if (v>minsup) Some(k) else None
     val line = lines.flatMap(_.split("\n"))
 //    val broadcastVar33= sc.broadcast(line)
-    val wordss=line.map(_.split(" ").toList.sorted.toSet)
+    var wordss=line.map(_.split(" ").toList.sorted.toSet)
 //    val broadcastVar333= sc.broadcast(wordss)
     val timer = new Stopwatch().start
     val words=line.flatMap(_.split(" "))
@@ -618,16 +618,22 @@ object  Apriori {
     val check=wordCounts.flatMap{case(k,v)=>h(k,v)}
     val list1 = Nil
     val check8=check.collect()
-    //println(check8)
-    //for (a<- check8){
-      //println (a)
-    //}
+//    println(check8)
+//    for (a<- check8){
+//      println (a)
+//    }
     val checkg=check8.toSeq
     val check9=checkg.sorted
     timer.stop
     val elapsedTime1110 = timer.stop.getElapsedTime
     println("elapsed time for step1-----------------------"+elapsedTime1110)
 
+
+      // remove infrequent items from transactions
+    wordss=line.map(_.split(" ").toList.filter(checkg.contains(_)).sorted.toSet).cache()
+//    for(clgt <- wordss){
+//        println(clgt)
+//    }
     val broadcastVar=sc.broadcast(check9)
     println("step1 complete-------------------------------------------------------------------------------")
     timer.reset
